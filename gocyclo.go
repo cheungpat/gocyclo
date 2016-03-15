@@ -43,6 +43,7 @@ Flags:
         -avg          show the average complexity over all functions,
                       not depending on whether -over or -top are set
         -skip-godeps  skip the Godeps folder
+        -skip-vendor  skip the vendor folder
 
 The output fields for each line are:
 <complexity> <package> <function> <file:row:column>
@@ -58,6 +59,7 @@ var (
 	top        = flag.Int("top", -1, "show the top N most complex functions only")
 	avg        = flag.Bool("avg", false, "show the average complexity")
 	skipGodeps = flag.Bool("skip-godeps", false, "skip the Godeps folder")
+	skipVendor = flag.Bool("skip-vendor", false, "skip the vendor folder")
 )
 
 func main() {
@@ -121,6 +123,9 @@ func analyzeDir(dirname string, stats []stat) []stat {
 
 func isAnalyzeTarget(path string) bool {
 	if strings.HasPrefix(path, "Godeps") && *skipGodeps {
+		return false
+	}
+	if strings.HasPrefix(path, "vendor") && *skipVendor {
 		return false
 	}
 	return strings.HasSuffix(path, ".go")
